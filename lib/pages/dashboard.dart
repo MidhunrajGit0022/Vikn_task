@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vikn_task/pages/invoices.dart';
+import 'package:vikn_task/pages/invoices_page.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -124,7 +124,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.to(const Invoices());
+                    Get.to(() => const Invoices_page());
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -190,9 +190,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                                 child: ClipRRect(
                                   child: IconButton(
-                                    onPressed: () {
-                                      Get.to(const Invoices());
-                                    },
+                                    onPressed: () {},
                                     icon: const Icon(
                                       Icons.arrow_forward,
                                       color: Colors.white,

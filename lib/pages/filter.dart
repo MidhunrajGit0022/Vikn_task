@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:vikn_task/api/api_controller.dart';
 
 class Filter_page extends StatefulWidget {
   const Filter_page({super.key});
@@ -10,6 +11,7 @@ class Filter_page extends StatefulWidget {
 }
 
 class _Filter_pageState extends State<Filter_page> {
+  final ApiController _apiController = ApiController.instance;
   String _selectedMonth = DateFormat('MMMM').format(DateTime.now());
   DateTime _selectedDate = DateTime.now();
   final List<String> _months = [
@@ -39,6 +41,13 @@ class _Filter_pageState extends State<Filter_page> {
         _selectedDate = picked;
       });
     }
+  }
+
+  @override
+  void initState() {
+    _apiController.filterdata('Pending');
+
+    super.initState();
   }
 
   @override
@@ -73,7 +82,7 @@ class _Filter_pageState extends State<Filter_page> {
                           width: screenSize.width * 0.01,
                         ),
                         const Text(
-                          "Invoices",
+                          "Filters",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ],
@@ -223,53 +232,72 @@ class _Filter_pageState extends State<Filter_page> {
                     SizedBox(
                       height: screenSize.height * 0.02,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(120, 40),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 26, 26, 26),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                    Obx(
+                      () => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(120, 40),
+                                backgroundColor:
+                                    _apiController.filteredstatus.value ==
+                                            'Pending'
+                                        ? Defaultcolor
+                                        : const Color.fromARGB(255, 26, 26, 26),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
                               ),
+                              onPressed: () {
+                                _apiController.filterdata('Pending');
+                              },
+                              child: const Text("Pending"),
                             ),
-                            onPressed: () {},
-                            child: const Text("Pending"),
                           ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(120, 40),
-                              backgroundColor: Defaultcolor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                          Flexible(
+                            flex: 1,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(120, 40),
+                                backgroundColor:
+                                    _apiController.filteredstatus.value ==
+                                            'Invoiced'
+                                        ? Defaultcolor
+                                        : const Color.fromARGB(255, 26, 26, 26),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
                               ),
+                              onPressed: () {
+                                _apiController.filterdata('Invoiced');
+                              },
+                              child: const Text("Invoiced"),
                             ),
-                            onPressed: () {},
-                            child: const Text("Invoiced"),
                           ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(120, 40),
-                              backgroundColor: Defaultcolor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                          Flexible(
+                            flex: 1,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(120, 40),
+                                backgroundColor:
+                                    _apiController.filteredstatus.value ==
+                                            'Cancelled'
+                                        ? Defaultcolor
+                                        : const Color.fromARGB(255, 26, 26, 26),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
                               ),
+                              onPressed: () {
+                                _apiController.filterdata('Cancelled');
+                              },
+                              child: const Text("Cancelled"),
                             ),
-                            onPressed: () {},
-                            child: const Text("Cancelled"),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     SizedBox(height: screenSize.height * 0.02),
                     Padding(
@@ -310,14 +338,35 @@ class _Filter_pageState extends State<Filter_page> {
                           Flexible(
                             child: Wrap(
                               children: [
-                                listofsearch(screenSize, Defaultcolor),
-                                listofsearch(screenSize, Defaultcolor),
+                                SizedBox(
+                                    height: screenSize.height * 0.5,
+                                    child: Obx(
+                                      () => ListView.builder(
+                                        itemCount: _apiController
+                                            .filteredSalesData
+                                            .value!
+                                            .data!
+                                            .length,
+                                        itemBuilder: (context, index) {
+                                          return listofsearch(
+                                            screenSize,
+                                            Defaultcolor,
+                                            _apiController
+                                                .filteredSalesData
+                                                .value!
+                                                .data![index]
+                                                .customerName
+                                                .toString(),
+                                          );
+                                        },
+                                      ),
+                                    )),
                               ],
                             ),
                           ),
                         ],
                       ),
-                    ),
+                    )
                   ],
                 )
               ],
@@ -328,7 +377,7 @@ class _Filter_pageState extends State<Filter_page> {
     );
   }
 
-  Column listofsearch(Size screenSize, Color Defaultcolor) {
+  Column listofsearch(Size screenSize, Color Defaultcolor, String salesData) {
     return Column(
       children: [
         Padding(
@@ -349,9 +398,9 @@ class _Filter_pageState extends State<Filter_page> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Text(
-                      "Midhun Raj",
-                      style: TextStyle(color: Colors.white),
+                    Text(
+                      salesData,
+                      style: const TextStyle(color: Colors.white),
                     ),
                     Icon(
                       Icons.close,

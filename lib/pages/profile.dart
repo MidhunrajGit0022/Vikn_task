@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:vikn_task/pages/login.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -144,7 +146,7 @@ class _ProfileState extends State<Profile> {
                                             const Text(
                                               "2,211",
                                               style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: Colors.grey,
                                                   fontSize: 18),
                                             ),
                                             Text(
@@ -237,7 +239,9 @@ class _ProfileState extends State<Profile> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.9,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.off(const Loginscreen());
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     backgroundColor: Colors.black,
