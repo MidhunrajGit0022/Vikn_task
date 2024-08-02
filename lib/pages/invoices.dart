@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vikn_task/pages/filter.dart';
 
 class Invoices extends StatefulWidget {
   const Invoices({super.key});
@@ -13,6 +14,7 @@ class _InvoicesState extends State<Invoices> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     Color Defaultcolor = const Color(0xFF0E75F4);
+
     return Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
@@ -59,6 +61,14 @@ class _InvoicesState extends State<Invoices> {
                           decoration: InputDecoration(
                             fillColor: Color.fromARGB(255, 26, 26, 26),
                             filled: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(117, 158, 158, 158)),
+                            ),
+                            hintText: 'Search',
+                            hintStyle: TextStyle(color: Colors.grey),
                             prefixIcon: Icon(
                               Icons.search,
                               color: Colors.grey,
@@ -66,7 +76,7 @@ class _InvoicesState extends State<Invoices> {
                             border: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
-                              borderSide: BorderSide(color: Colors.grey),
+                              borderSide: BorderSide(color: Colors.white),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius:
@@ -81,10 +91,12 @@ class _InvoicesState extends State<Invoices> {
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(0, 50),
+                              minimumSize: const Size(0, 55),
                               backgroundColor:
                                   const Color.fromARGB(255, 26, 26, 26)),
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(const Filter_page());
+                          },
                           child: Row(
                             children: [
                               Icon(
