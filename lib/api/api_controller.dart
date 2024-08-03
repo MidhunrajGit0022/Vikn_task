@@ -12,10 +12,8 @@ import 'package:vikn_task/pages/bottomnav.dart';
 class ApiController extends GetxController {
   static ApiController get instance => Get.find();
 
-  TextEditingController usernamecontroller =
-      TextEditingController(text: 'Rabeeh@vk');
-  TextEditingController passwordcontroller =
-      TextEditingController(text: 'Rabeeh@000');
+  TextEditingController usernamecontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
   TextEditingController searchcontroller = TextEditingController();
 
   String? _token;
