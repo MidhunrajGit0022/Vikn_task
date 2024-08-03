@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:vikn_task/model/profilemodel.dart';
 import 'package:vikn_task/model/sales_model.dart';
 import 'package:vikn_task/model/usermodel.dart';
 import 'package:vikn_task/pages/bottomnav.dart';
@@ -21,8 +22,10 @@ class ApiController extends GetxController {
   int? _userId;
   Userdata? userdata;
   SalesData? allsalesdata;
-  // SalesData? filteredSalesData;
+  Profiledata? allprofiledata;
+
   Rx<SalesData?> filteredSalesData = Rx<SalesData?>(null);
+  Rx<SalesData?> searchsaleslist = Rx<SalesData?>(null);
   RxString filteredstatus = RxString('Pending');
 
   Future<void> login(String username, String password) async {
@@ -49,6 +52,7 @@ class ApiController extends GetxController {
       _token = userdata!.data?.access;
       _userId = userdata!.userId;
       Get.off(() => const BottomNavigation());
+
       log("Login Successfull");
       Get.snackbar("Successfull", "Login Successfull",
           backgroundColor: Colors.white);
@@ -120,18 +124,53 @@ class ApiController extends GetxController {
 
   Future<SalesData?> searchuser() async {
     try {
+      log("Seachred looggg");
       if (allsalesdata != null) {
         List<Sales> filteredData = allsalesdata!.data!.where((element) {
           print('Element status: ${element.customerName}');
-          return element.customerName == searchcontroller.text;
+          log(searchcontroller.text);
+          return element.customerName!
+              .toLowerCase()
+              .contains(searchcontroller.text.toLowerCase());
         }).toList();
-        filteredSalesData.value = SalesData(
-          statusCode: allsalesdata!.statusCode,
-          data: filteredData,
-          totalCount: filteredData.length,
-        );
-        return filteredSalesData.value;
+
+        if (searchcontroller.text.isEmpty) {
+          searchsaleslist.value = allsalesdata;
+        } else {
+          searchsaleslist.value = SalesData(
+            statusCode: allsalesdata!.statusCode,
+            data: filteredData,
+            totalCount: filteredData.length,
+          );
+        }
+        return searchsaleslist.value;
       } else {
+        return null;
+      }
+    } catch (e) {
+      log('Error: $e');
+      return null;
+    }
+  }
+
+  Future<Profiledata?> fetchuserprofile() async {
+    try {
+      final url = Uri.parse(
+          'https://www.api.viknbooks.com/api/v10/users/user-view/62/');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer ${userdata!.data?.access}',
+        },
+      );
+      log(response.body);
+      final jsonData = jsonDecode(response.body);
+      if (jsonData['StatusCode'] == 6000) {
+        allprofiledata = Profiledata.fromJson(jsonData);
+        return allprofiledata;
+      } else {
+        log('failed');
         return null;
       }
     } catch (e) {

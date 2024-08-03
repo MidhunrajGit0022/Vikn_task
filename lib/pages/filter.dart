@@ -333,38 +333,47 @@ class _Filter_pageState extends State<Filter_page> {
                     ),
                     SizedBox(
                       width: screenSize.width,
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Wrap(
-                              children: [
-                                SizedBox(
-                                    height: screenSize.height * 0.5,
-                                    child: Obx(
-                                      () => ListView.builder(
-                                        itemCount: _apiController
-                                            .filteredSalesData
-                                            .value!
-                                            .data!
-                                            .length,
-                                        itemBuilder: (context, index) {
-                                          return listofsearch(
-                                            screenSize,
-                                            Defaultcolor,
-                                            _apiController
-                                                .filteredSalesData
-                                                .value!
-                                                .data![index]
-                                                .customerName
-                                                .toString(),
-                                          );
-                                        },
-                                      ),
-                                    )),
-                              ],
-                            ),
-                          ),
-                        ],
+                      child: Obx(
+                        () => ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: (_apiController
+                                      .filteredSalesData.value!.data!.length /
+                                  3)
+                              .ceil(),
+                          itemBuilder: (context, index) {
+                            return ConstrainedBox(
+                              constraints:
+                                  BoxConstraints(maxWidth: screenSize.width),
+                              child: Row(
+                                children: List.generate(
+                                  3,
+                                  (index2) {
+                                    int itemIndex = index * 3 + index2;
+                                    if (itemIndex <
+                                        _apiController.filteredSalesData.value!
+                                            .data!.length) {
+                                      return Flexible(
+                                        child: listofsearch(
+                                          screenSize,
+                                          Defaultcolor,
+                                          _apiController
+                                              .filteredSalesData
+                                              .value!
+                                              .data![itemIndex]
+                                              .customerName
+                                              .toString(),
+                                        ),
+                                      );
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     )
                   ],
@@ -383,6 +392,7 @@ class _Filter_pageState extends State<Filter_page> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
+            width: screenSize.width * 0.3,
             height: screenSize.height * 0.05,
             decoration: const BoxDecoration(
                 color: Color.fromARGB(
@@ -398,9 +408,12 @@ class _Filter_pageState extends State<Filter_page> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(
-                      salesData,
-                      style: const TextStyle(color: Colors.white),
+                    Expanded(
+                      child: Text(
+                        salesData,
+                        style: const TextStyle(color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     Icon(
                       Icons.close,

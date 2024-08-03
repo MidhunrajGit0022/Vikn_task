@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vikn_task/api/api_controller.dart';
+import 'package:vikn_task/model/profilemodel.dart';
 import 'package:vikn_task/pages/invoices_page.dart';
 
 class Dashboard extends StatefulWidget {
@@ -10,6 +12,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final apicontroller = Get.put(ApiController());
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -26,10 +29,31 @@ class _DashboardState extends State<Dashboard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Image.asset('./assets/logo.png'),
-                    CircleAvatar(
-                        backgroundColor: const Color(0xFF0F0F0F),
-                        radius: 30,
-                        child: Image.asset('./assets/person.png')),
+                    FutureBuilder<Profiledata?>(
+                      future: apicontroller.fetchuserprofile(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          Profiledata? profileData = snapshot.data;
+                          if (profileData!.customerData!.photo != null) {
+                            return CircleAvatar(
+                              backgroundColor: const Color(0xFF0F0F0F),
+                              radius: 30,
+                              backgroundImage: NetworkImage(
+                                profileData.customerData!.photo.toString(),
+                              ),
+                              onBackgroundImageError: (context, error) {
+                                return;
+                              },
+                            );
+                          } else {
+                            return Image.asset('./assets/person.png');
+                          }
+                        } else if (snapshot.hasError) {
+                          return Image.asset('./assets/person.png');
+                        }
+                        return const CircularProgressIndicator();
+                      },
+                    ),
                   ],
                 ),
                 SizedBox(
